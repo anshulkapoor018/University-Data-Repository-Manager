@@ -16,8 +16,8 @@ from HW09_Anshul_Kapoor import Repository
 class TestRepository(unittest.TestCase):
     def test_repository(self):
         """ Testing Class Repository """
-        repo = Repository("/Users/django/PycharmProjects/810A/University Data Manager/stevens")
-        repo_first_year = Repository("/Users/django/PycharmProjects/810A/University Data Manager/stevens first year")
+        repo = Repository("/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens")
+        repo_first_year = Repository("/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens first year")
 
         new_student_name_list = list()
         new_major_name_list = list()

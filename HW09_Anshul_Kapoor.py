@@ -104,7 +104,6 @@ class Repository:
             dept = value['department']
             if value['container']:
                 for key1, value1 in value['container'].items():
-                    print(key1, value1)
                     table.add_row([cwid, name, dept, key1, value1])
             else:
                 table.add_row([cwid, name, dept, "None", "None"])
@@ -200,7 +199,7 @@ class Student:
             self.students_summary = students_summary_dict
 
 def main():
-    stevens_dir = "/Users/django/PycharmProjects/810A/University Data Manager/stevens"
+    stevens_dir = "/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens"
 
     try:
         stevens = Repository(stevens_dir)
