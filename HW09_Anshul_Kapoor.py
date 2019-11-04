@@ -26,7 +26,7 @@ class Repository:
         self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
         self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
         # self.grades_reading_gen()
-        print(self.majors_files_analysis_container)
+        # print(self.majors_files_analysis_container)
 
     def grades_reading_gen(self):
         """ Grades File Reading Operation which reads Data from it
@@ -110,6 +110,19 @@ class Repository:
                     table.add_row([cwid, name, dept, key1, value1])
             else:
                 table.add_row([cwid, name, dept, "None", "None"])
+
+        return table
+
+    def pretty_print_majors(self):
+        """  Pretty Print Instructors Summary  """
+        table = PrettyTable()
+        table.field_names = ["Dept", "Required", "Electives"]
+
+        for key, value in self.majors_files_analysis_container.items():
+            dept = key
+            req = value["Required"]
+            elec = value["Electives"]
+            table.add_row([dept, req, elec])
 
         return table
 
@@ -260,7 +273,7 @@ def main():
     try:
         stevens = Repository(stevens_dir)
         # print(stevens.pretty_print_students())
-        # print(stevens.pretty_print_instructors())
+        print(stevens.pretty_print_majors())
     except FileNotFoundError:
         print(f"No Directory found at path --> {stevens_dir}")
 
