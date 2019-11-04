@@ -15,14 +15,14 @@ class Repository:
     def __init__(self, path):
         """ init class operation """
         self.path = path
-        self.grade_file_header = False
+        self.grade_file_header = True
         self.grade_file_fields = 4
-        self.grade_file_sep = '\t'
+        self.grade_file_sep = '|'
         self.students_file_path = self.path + "/students.txt"
         self.instructors_file_path = self.path + "/instructors.txt"
         self.grades_file_path = self.path + "/grades.txt"
-        self.students_file_analysis_container = (Student(self.students_file_path, 3, sep='\t', header=False)).students_summary
-        self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='\t', header=False)).instructors_summary
+        self.students_file_analysis_container = (Student(self.students_file_path, 3, sep=';', header=True)).students_summary
+        self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
         self.grades_reading_gen()
 
     def grades_reading_gen(self):
