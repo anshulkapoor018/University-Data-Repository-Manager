@@ -21,9 +21,12 @@ class Repository:
         self.students_file_path = self.path + "/students.txt"
         self.instructors_file_path = self.path + "/instructors.txt"
         self.grades_file_path = self.path + "/grades.txt"
+        self.majors_file_path = self.path + "/majors.txt"
         self.students_file_analysis_container = (Student(self.students_file_path, 3, sep=';', header=True)).students_summary
         self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
-        self.grades_reading_gen()
+        self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
+        # self.grades_reading_gen()
+        print(self.majors_files_analysis_container)
 
     def grades_reading_gen(self):
         """ Grades File Reading Operation which reads Data from it
@@ -109,6 +112,59 @@ class Repository:
                 table.add_row([cwid, name, dept, "None", "None"])
 
         return table
+
+class Majors:
+    """ Class to instantiate the Students Summary """
+    def __init__(self, path, fields, sep='\t', header=False):
+        """ init class operation """
+        self.path = path
+        self.fields = fields
+        self.sep = sep
+        self.header = header
+        self.majors_summary = dict()
+        self.major_reading_gen()
+
+    def major_reading_gen(self):
+        """ Function for student file reading """
+        majors_summary_dict = {}
+        majors_summary_list = list()
+        file_name = self.path
+        try:
+            fp = open(file_name, 'r', encoding='utf-8')
+        except FileNotFoundError as file_not_found:
+            raise file_not_found
+        else:
+            with fp:
+                line_count = 0
+                if self.header is True:
+                    next(fp)
+                line = fp.readline().strip('\r\n')
+                while line:
+                    i = 0
+                    line_count += 1
+                    majors_summary_list.clear()
+                    current_line = line.strip().split(self.sep)
+                    if len(current_line) != self.fields:
+                        raise ValueError(
+                            f"{os.path.basename(self.path)} has {len(current_line)} fields on line {line_count} but expected {self.fields}")
+                    while i < self.fields:
+                        majors_summary_list.append(current_line[i])
+                        i = i + 1
+
+                    if majors_summary_list[0] not in majors_summary_dict:
+                        if majors_summary_list[1] == "R":
+                            majors_summary_dict[majors_summary_list[0]] = {"Required": [majors_summary_list[2]], "Electives": []}
+                        elif majors_summary_list[1] == "E":
+                            majors_summary_dict[majors_summary_list[0]] = {"Required": [], "Electives": [majors_summary_list[2]]}
+                    else:
+                        if majors_summary_list[1] == "R":
+                            majors_summary_dict[majors_summary_list[0]]["Required"] += [majors_summary_list[2]]
+                        elif majors_summary_list[1] == "E":
+                            majors_summary_dict[majors_summary_list[0]]["Electives"] += [majors_summary_list[2]]
+
+                    line = fp.readline().strip('\r\n')
+
+            self.majors_summary = majors_summary_dict
 
 class Instructor:
     """ Class to instantiate the Instructor Summary """
@@ -203,8 +259,8 @@ def main():
 
     try:
         stevens = Repository(stevens_dir)
-        print(stevens.pretty_print_students())
-        print(stevens.pretty_print_instructors())
+        # print(stevens.pretty_print_students())
+        # print(stevens.pretty_print_instructors())
     except FileNotFoundError:
         print(f"No Directory found at path --> {stevens_dir}")
 
