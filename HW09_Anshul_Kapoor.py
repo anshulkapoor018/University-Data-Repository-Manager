@@ -22,11 +22,11 @@ class Repository:
         self.instructors_file_path = self.path + "/instructors.txt"
         self.grades_file_path = self.path + "/grades.txt"
         self.majors_file_path = self.path + "/majors.txt"
+        self.passing_grade_list = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C']
         self.students_file_analysis_container = (Student(self.students_file_path, 3, sep=';', header=True)).students_summary
         self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
         self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
-        # self.grades_reading_gen()
-        # print(self.majors_files_analysis_container)
+        self.grades_reading_gen()
 
     def grades_reading_gen(self):
         """ Grades File Reading Operation which reads Data from it
@@ -76,23 +76,40 @@ class Repository:
                         report[value[i]['Course']] = value[i]['Grade']
                 self.students_file_analysis_container[key]['container'] = report
 
+            for key, value in self.students_file_analysis_container.items():
+                if value['major'] not in self.majors_files_analysis_container:
+                    raise ValueError
+                else:
+                    completed_subject_taken_list = []
+                    remaining_electives = self.majors_files_analysis_container[value['major']]["Electives"]
+                    remaining_required = self.majors_files_analysis_container[value['major']]["Required"]
+                    for subject, grade in (value['container']).items():
+                        if grade in self.passing_grade_list:
+                            completed_subject_taken_list.append(subject)
+                            if subject in remaining_electives:
+                                remaining_electives = ["None"]
+
+                    completed_subject_taken_list.sort()
+
+                    for sub in completed_subject_taken_list:
+                        remaining_required = [x for x in remaining_required if x != sub]
+
+                    remaining_required.sort()
+
+                    self.students_file_analysis_container[key]["completed"] = completed_subject_taken_list
+                    self.students_file_analysis_container[key]["remaining required"] = remaining_required
+                    self.students_file_analysis_container[key]["remaining electives"] = remaining_electives
+
             for key, value in grades_summary_dict_i.items():
                 self.instructors_file_analysis_container[key]['container'] = dict(Counter(value))
 
     def pretty_print_students(self):
         """  Pretty Print Students Summary  """
         table = PrettyTable()
-        table.field_names = ["CWID", "Name", "Completed Courses"]
+        table.field_names = ["CWID", "Name", "Major", "Completed Courses", "Remaining Required", "Remaining Electives"]
 
         for key, value in self.students_file_analysis_container.items():
-            subject_list = list()
-            cwid = key
-            name = value['name']
-            for item in value['container']:
-                subject_list.append(item)
-            subject_list.sort()
-
-            table.add_row([cwid, name, subject_list])
+            table.add_row([key, value['name'], value['major'], value['completed'], value['remaining required'], value['remaining electives']])
 
         return table
 
@@ -261,7 +278,12 @@ class Student:
                         students_summary_list.append(current_line[i])
                         i = i + 1
 
-                    students_summary_dict[students_summary_list[0]] = {"name": students_summary_list[1], "major": students_summary_list[2], "container": defaultdict(str)}
+                    students_summary_dict[students_summary_list[0]] = {"name": students_summary_list[1],
+                                                                       "major": students_summary_list[2],
+                                                                       "remaining required": list(),
+                                                                       "remaining electives": list(),
+                                                                       "completed": list(),
+                                                                       "container": defaultdict(str)}
 
                     line = fp.readline().strip('\r\n')
 
@@ -272,7 +294,8 @@ def main():
 
     try:
         stevens = Repository(stevens_dir)
-        # print(stevens.pretty_print_students())
+        print(stevens.pretty_print_students())
+        print(stevens.pretty_print_instructors())
         print(stevens.pretty_print_majors())
     except FileNotFoundError:
         print(f"No Directory found at path --> {stevens_dir}")
