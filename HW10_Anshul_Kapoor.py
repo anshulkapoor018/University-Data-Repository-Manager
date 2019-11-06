@@ -76,8 +76,10 @@ class Repository:
                         report[value[i]['Course']] = value[i]['Grade']
                 try:
                     self.students_file_analysis_container[key]['container'] = report
-                except ValueError:
+                except KeyError:
+                    print("***************************************************")
                     print(f"No Student found in Database with CWID : {key}")
+                    print("***************************************************")
 
 
             for key, value in self.students_file_analysis_container.items():
@@ -107,8 +109,10 @@ class Repository:
             for key, value in grades_summary_dict_i.items():
                 try:
                     self.instructors_file_analysis_container[key]['container'] = dict(Counter(value))
-                except ValueError:
+                except KeyError:
+                    print("***************************************************")
                     print(f"No Instructor found in Database with CWID : {key}")
+                    print("***************************************************")
 
 
     def pretty_print_students(self):
