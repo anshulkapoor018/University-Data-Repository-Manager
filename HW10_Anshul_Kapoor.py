@@ -74,7 +74,11 @@ class Repository:
                 for i in range(len(value)):
                     if value[i]['Course'] not in report:
                         report[value[i]['Course']] = value[i]['Grade']
-                self.students_file_analysis_container[key]['container'] = report
+                try:
+                    self.students_file_analysis_container[key]['container'] = report
+                except ValueError:
+                    print(f"No Student found in Database with CWID : {key}")
+
 
             for key, value in self.students_file_analysis_container.items():
                 if value['major'] not in self.majors_files_analysis_container:
@@ -101,7 +105,11 @@ class Repository:
                     self.students_file_analysis_container[key]["remaining electives"] = remaining_electives
 
             for key, value in grades_summary_dict_i.items():
-                self.instructors_file_analysis_container[key]['container'] = dict(Counter(value))
+                try:
+                    self.instructors_file_analysis_container[key]['container'] = dict(Counter(value))
+                except ValueError:
+                    print(f"No Instructor found in Database with CWID : {key}")
+
 
     def pretty_print_students(self):
         """  Pretty Print Students Summary  """
@@ -194,7 +202,6 @@ class Majors:
 
                     line = fp.readline().strip('\r\n')
 
-            print(majors_summary_dict)
             self.majors_summary = majors_summary_dict
 
 class Instructor:
