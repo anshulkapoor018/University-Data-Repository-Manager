@@ -18,10 +18,10 @@ class Repository:
         self.grade_file_header = True
         self.grade_file_fields = 4
         self.grade_file_sep = '|'
-        self.students_file_path = self.path + "/students.txt"
-        self.instructors_file_path = self.path + "/instructors.txt"
-        self.grades_file_path = self.path + "/grades.txt"
-        self.majors_file_path = self.path + "/majors.txt"
+        self.students_file_path = os.path.join(self.path, "students.txt")
+        self.instructors_file_path = os.path.join(self.path, "instructors.txt")
+        self.grades_file_path = os.path.join(self.path, "grades.txt")
+        self.majors_file_path = os.path.join(self.path, "majors.txt")
         self.passing_grade_list = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C']
         self.students_file_analysis_container = (Student(self.students_file_path, 3, sep=';', header=True)).students_summary
         self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
@@ -194,6 +194,7 @@ class Majors:
 
                     line = fp.readline().strip('\r\n')
 
+            print(majors_summary_dict)
             self.majors_summary = majors_summary_dict
 
 class Instructor:
