@@ -133,8 +133,8 @@ class Repository:
             if value['container']:
                 for key1, value1 in value['container'].items():
                     table.add_row([cwid, name, dept, key1, value1])
-            else:
-                table.add_row([cwid, name, dept, "None", "None"])
+            # else:
+            #     table.add_row([cwid, name, dept, "None", "None"])
 
         return table
 
@@ -250,7 +250,7 @@ class Instructor:
 
 class Student:
     """ Class to instantiate the Students Summary """
-    def __init__(self, path, fields, sep='\t', header=False):
+    def __init__(self, path, fields, sep=';', header=True):
         """ init class operation """
         self.path = path
         self.fields = fields
@@ -302,9 +302,13 @@ def main():
 
     try:
         stevens = Repository(stevens_dir)
-        print(stevens.pretty_print_students())
-        print(stevens.pretty_print_instructors())
+        print("\nMajors Summary")
         print(stevens.pretty_print_majors())
+        print("\nStudent Summary")
+        print(stevens.pretty_print_students())
+        print("\nInstructor Summary")
+        print(stevens.pretty_print_instructors())
+
     except FileNotFoundError:
         print(f"No Directory found at path --> {stevens_dir}")
 
