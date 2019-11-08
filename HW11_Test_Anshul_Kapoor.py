@@ -28,6 +28,11 @@ class TestRepository(unittest.TestCase):
         instructor_dept_list = list()
         instructor_courses_taught_list = list()
 
+        instructor_db_result_list = list()
+
+        for row in repo.instructors_file_analysis_container_using_db:
+            instructor_db_result_list.append(row)
+
         for j in repo.students_file_analysis_container.values():
             student_name_list.append(j["name"])
             student_major_list.append(j["major"])
@@ -60,11 +65,19 @@ class TestRepository(unittest.TestCase):
 
         self.assertEqual(instructor_courses_taught_list, [['CS 546'], ['SSW 810', 'SSW 555'], ['CS 501', 'CS 546', 'CS 570']])
 
-        # # Testing Major Summary Data of Repo Instance
+        # Testing Major Summary Data of Repo Instance
         self.assertEqual(repo.majors_files_analysis_container, {'SFEN': {'Required': ['SSW 540', 'SSW 810', 'SSW 555'],
                                                                          'Electives': ['CS 501', 'CS 546']},
                                                                 'CS': {'Required': ['CS 570', 'CS 546'],
                                                                        'Electives': ['SSW 810', 'SSW 565']}})
+
+        # Testing Instructor Summary Data of Repo Instance using Database
+        self.assertEqual(instructor_db_result_list, [('98762', 'Hawking, S', 'CS', 'CS 501', 1),
+                                                     ('98762', 'Hawking, S', 'CS', 'CS 546', 1),
+                                                     ('98762', 'Hawking, S', 'CS', 'CS 570', 1),
+                                                     ('98763', 'Rowland, J', 'SFEN', 'SSW 555', 1),
+                                                     ('98763', 'Rowland, J', 'SFEN', 'SSW 810', 4),
+                                                     ('98764', 'Cohen, R', 'SFEN', 'CS 546', 1)])
 
         # Testing for DirectoryNotFound
         with self.assertRaises(FileNotFoundError):

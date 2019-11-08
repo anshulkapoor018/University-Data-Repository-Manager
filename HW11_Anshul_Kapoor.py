@@ -16,6 +16,7 @@ class Repository:
     def __init__(self, path):
         """ init class operation """
         self.path = path
+        self.dbpath = '/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/repository.db'
         self.grade_file_header = True
         self.grade_file_fields = 4
         self.grade_file_sep = '\t'
@@ -28,6 +29,32 @@ class Repository:
         self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='\t', header=True)).instructors_summary
         self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
         self.grades_reading_gen()
+        self.instructors_file_analysis_container_using_db = self.instructor_table_db(self.dbpath)
+
+    @staticmethod
+    def instructor_table_db(db_path):
+        table = PrettyTable()
+        table.field_names = ["CWID", "Name", "Dept", "Course", "Students"]
+        query_fetched_data = list()
+        database_file_path = db_path
+        db = sqlite3.connect(database_file_path)
+        for row in db.execute("SELECT Instructor_CWID, Name, Dept, Course, count(*) as Students "
+                              "from instructors join grades on instructors.CWID = grades.Instructor_CWID "
+                              "group by instructors.Name, grades.Course "
+                              "order by Instructor_CWID"):
+            query_fetched_data.append(row)
+
+        return query_fetched_data
+
+    def pretty_print_instructors_using_db(self):
+        """  Pretty Print Instructors Summary  """
+        table = PrettyTable()
+        table.field_names = ["CWID", "Name", "Dept", "Course", "Students"]
+
+        for row in self.instructors_file_analysis_container_using_db:
+            table.add_row(row)
+
+        return table
 
     def grades_reading_gen(self):
         """ Grades File Reading Operation which reads Data from it
@@ -307,6 +334,10 @@ def main():
 
     try:
         stevens = Repository(stevens_dir)
+
+        print("\nInstructor Summary using Repository Database")
+        print(stevens.pretty_print_instructors_using_db())
+        print("\n****************************************************\n")
         print("\nMajors Summary")
         print(stevens.pretty_print_majors())
         print("\nStudent Summary")
