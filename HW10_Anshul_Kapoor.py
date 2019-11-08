@@ -18,14 +18,14 @@ class Repository:
         self.path = path
         self.grade_file_header = True
         self.grade_file_fields = 4
-        self.grade_file_sep = '|'
+        self.grade_file_sep = '\t'
         self.students_file_path = os.path.join(self.path, "students.txt")
         self.instructors_file_path = os.path.join(self.path, "instructors.txt")
         self.grades_file_path = os.path.join(self.path, "grades.txt")
         self.majors_file_path = os.path.join(self.path, "majors.txt")
         self.passing_grade_list = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C']
-        self.students_file_analysis_container = (Student(self.students_file_path, 3, sep=';', header=True)).students_summary
-        self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='|', header=True)).instructors_summary
+        self.students_file_analysis_container = (Student(self.students_file_path, 3, sep='\t', header=True)).students_summary
+        self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='\t', header=True)).instructors_summary
         self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
         self.grades_reading_gen()
 
@@ -303,7 +303,7 @@ class Student:
             self.students_summary = students_summary_dict
 
 def main():
-    stevens_dir = "/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens"
+    stevens_dir = "/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens db files"
 
     try:
         stevens = Repository(stevens_dir)
