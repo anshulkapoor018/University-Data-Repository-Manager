@@ -7,6 +7,7 @@ HW10_Anshul_Kapoor.py
 __author__ = "Anshul Kapoor"
 
 import os
+import sqlite3
 from collections import defaultdict
 from collections import Counter
 from prettytable import PrettyTable
