@@ -1,0 +1,34 @@
+Query Answers
+
+4.1
+SELECT Name from instructors
+where CWID = '98763';
+
+4.2
+SELECT Dept, count(*) as cnt
+from instructors group by Dept;
+
+4.3
+SELECT Grade
+FROM grades
+Group by Grade
+Order BY count(*) DESC
+LIMIT 1;
+
+4.4
+Select Name, CWID, Major, Course, Grade
+from grades join students
+on grades.Student_CWID = student.CWID;
+
+4.5
+Select Name, CWID, Major, Course, Grade
+from students join grades
+on students.CWID = grades.Student_CWID
+where Course = "SSW 810";
+
+4.6
+SELECT Instructor_CWID, Name, Dept, Course, count(*) as Students
+from instructors join grades
+on instructors.CWID = grades.Instructor_CWID
+group by instructors.Name, grades.Course
+order by Instructor_CWID;
