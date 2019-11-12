@@ -33,8 +33,6 @@ class Repository:
 
     @staticmethod
     def instructor_table_db(db_path):
-        table = PrettyTable()
-        table.field_names = ["CWID", "Name", "Dept", "Course", "Students"]
         query_fetched_data = list()
         database_file_path = db_path
         db = sqlite3.connect(database_file_path)
@@ -112,7 +110,7 @@ class Repository:
 
             for key, value in self.students_file_analysis_container.items():
                 if value['major'] not in self.majors_files_analysis_container:
-                    raise ValueError
+                    print(f"Unknown major found in students.txt file-> {value['major']}")
                 else:
                     completed_subject_taken_list = []
                     remaining_electives = self.majors_files_analysis_container[value['major']]["Electives"]
@@ -330,9 +328,9 @@ class Student:
             self.students_summary = students_summary_dict
 
 def main():
-    stevens_dir = "/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens db files"
-
     try:
+        dir_path = os.getcwd()
+        stevens_dir = os.path.join(dir_path, "stevens db files")
         stevens = Repository(stevens_dir)
 
         print("\nInstructor Summary using Repository Database")

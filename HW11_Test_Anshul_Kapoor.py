@@ -10,13 +10,16 @@ for logic and unitTests in different files
 __author__ = "Anshul Kapoor"
 
 import unittest
+import os
 from HW11_Anshul_Kapoor import Repository
 
 
 class TestRepository(unittest.TestCase):
     def test_repository(self):
         """ Testing Class Repository """
-        repo = Repository("/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/stevens db files")
+        dir_path = os.getcwd()
+        db_path = os.path.join(dir_path, "stevens db files")
+        repo = Repository(db_path)
 
         student_name_list = list()
         student_major_list = list()
