@@ -6,12 +6,38 @@ HW12_Anshul_Kapoor.py
 
 __author__ = "Anshul Kapoor"
 
-from flask import Flask
+from flask import Flask, render_template
 import os
 import sqlite3
 from collections import defaultdict
 from collections import Counter
 from prettytable import PrettyTable
+
+app = Flask(__name__)
+
+@app.route('/students')
+def students_courses():
+    dbpath = '/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/repository.db'
+
+    try:
+        db = sqlite3.connect(dbpath)
+    except sqlite3.OperationalError:
+        return f"Error: Unable to open Database at - {dbpath}"
+    else:
+        query = """ select s.cwid, s.name, s.major, count(g.Course) as complete
+                    from students s join grades g on s.CWID = g.Student_CWID
+                    group by s.CWID, s.Name, s.Major    """
+        data = [{'cwid': cwid, 'name': name, 'major': major, 'complete': complete}
+                for cwid, name, major, complete in db.execute(query)]
+        print(data)
+        db.close()
+
+        return render_template(
+            'student_courses.html',
+            title='Stevens Repository',
+            table_title='Number of Completed Courses by Student',
+            students=data
+        )
 
 class Repository:
     def __init__(self, path):
@@ -350,3 +376,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    app.run(debug=True)
