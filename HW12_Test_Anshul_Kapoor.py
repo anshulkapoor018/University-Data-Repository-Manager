@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-HW11_Test_Anshul_Kapoor.py
+HW12_Test_Anshul_Kapoor.py
 This Script demonstrates the use-case of
 import statements and code segregation
 for logic and unitTests in different files
@@ -11,7 +11,7 @@ __author__ = "Anshul Kapoor"
 
 import unittest
 import os
-from HW11_Anshul_Kapoor import Repository
+from HW12_Anshul_Kapoor import Repository
 
 
 class TestRepository(unittest.TestCase):
