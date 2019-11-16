@@ -15,6 +15,34 @@ from prettytable import PrettyTable
 
 app = Flask(__name__)
 
+
+@app.route('/instructor_courses')
+def instructor_courses():
+    dbpath = '/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/repository.db'
+
+    try:
+        db = sqlite3.connect(dbpath)
+    except sqlite3.OperationalError:
+        return f"Error: Unable to open Database at - {dbpath}"
+    else:
+        query = """ SELECT Instructor_CWID, Name, Dept, Course, count(*) as Students
+                    from instructors join grades
+                    on instructors.CWID = grades.Instructor_CWID
+                    group by instructors.Name, grades.Course
+                    order by Instructor_CWID    """
+        data1 = [{'cwid': cwid, 'name': name, 'dept': dept, 'courses': courses, 'students': students}
+                 for cwid, name, dept, courses, students in db.execute(query)]
+        print(data1)
+        db.close()
+
+        return render_template(
+            'instructor_courses.html',
+            title='Stevens Repository',
+            table_title='Number of Students by course and instructors',
+            students=data1
+        )
+
+
 @app.route('/students')
 def students_courses():
     dbpath = '/Users/django/PycharmProjects/810A/University-Data-Repository-Manager/repository.db'
@@ -39,6 +67,7 @@ def students_courses():
             students=data
         )
 
+
 class Repository:
     def __init__(self, path):
         """ init class operation """
@@ -52,8 +81,10 @@ class Repository:
         self.grades_file_path = os.path.join(self.path, "grades.txt")
         self.majors_file_path = os.path.join(self.path, "majors.txt")
         self.passing_grade_list = ['A', 'A-', 'B+', 'B', 'B-', 'C+', 'C']
-        self.students_file_analysis_container = (Student(self.students_file_path, 3, sep='\t', header=True)).students_summary
-        self.instructors_file_analysis_container = (Instructor(self.instructors_file_path, 3, sep='\t', header=True)).instructors_summary
+        self.students_file_analysis_container = (
+            Student(self.students_file_path, 3, sep='\t', header=True)).students_summary
+        self.instructors_file_analysis_container = (
+            Instructor(self.instructors_file_path, 3, sep='\t', header=True)).instructors_summary
         self.majors_files_analysis_container = (Majors(self.majors_file_path, 3, sep='\t', header=True)).majors_summary
         self.grades_reading_gen()
         self.instructors_file_analysis_container_using_db = self.instructor_table_db(self.dbpath)
@@ -105,7 +136,8 @@ class Repository:
                     grades_summary_list.clear()
                     current_line = line.strip().split(self.grade_file_sep)
                     if len(current_line) != self.grade_file_fields:
-                        raise ValueError(f"{os.path.basename(self.grades_file_path)} has {len(current_line)} fields on line {line_count} but expected {self.grade_file_fields}")
+                        raise ValueError(
+                            f"{os.path.basename(self.grades_file_path)} has {len(current_line)} fields on line {line_count} but expected {self.grade_file_fields}")
                     while i < self.grade_file_fields:
                         grades_summary_list.append(current_line[i])
                         i = i + 1
@@ -133,7 +165,6 @@ class Repository:
                     print("***************************************************")
                     print(f"No Student found in Database with CWID : {key}")
                     print("***************************************************")
-
 
             for key, value in self.students_file_analysis_container.items():
                 if value['major'] not in self.majors_files_analysis_container:
@@ -167,14 +198,14 @@ class Repository:
                     print(f"No Instructor found in Database with CWID : {key}")
                     print("***************************************************")
 
-
     def pretty_print_students(self):
         """  Pretty Print Students Summary  """
         table = PrettyTable()
         table.field_names = ["CWID", "Name", "Major", "Completed Courses", "Remaining Required", "Remaining Electives"]
 
         for key, value in self.students_file_analysis_container.items():
-            table.add_row([key, value['name'], value['major'], value['completed'], value['remaining required'], value['remaining electives']])
+            table.add_row([key, value['name'], value['major'], value['completed'], value['remaining required'],
+                           value['remaining electives']])
 
         return table
 
@@ -208,8 +239,10 @@ class Repository:
 
         return table
 
+
 class Majors:
     """ Class to instantiate the Students Summary """
+
     def __init__(self, path, fields, sep='\t', header=False):
         """ init class operation """
         self.path = path
@@ -248,9 +281,11 @@ class Majors:
 
                     if majors_summary_list[0] not in majors_summary_dict:
                         if majors_summary_list[1] == "R":
-                            majors_summary_dict[majors_summary_list[0]] = {"Required": [majors_summary_list[2]], "Electives": []}
+                            majors_summary_dict[majors_summary_list[0]] = {"Required": [majors_summary_list[2]],
+                                                                           "Electives": []}
                         elif majors_summary_list[1] == "E":
-                            majors_summary_dict[majors_summary_list[0]] = {"Required": [], "Electives": [majors_summary_list[2]]}
+                            majors_summary_dict[majors_summary_list[0]] = {"Required": [],
+                                                                           "Electives": [majors_summary_list[2]]}
                     else:
                         if majors_summary_list[1] == "R":
                             majors_summary_dict[majors_summary_list[0]]["Required"] += [majors_summary_list[2]]
@@ -261,8 +296,10 @@ class Majors:
 
             self.majors_summary = majors_summary_dict
 
+
 class Instructor:
     """ Class to instantiate the Instructor Summary """
+
     def __init__(self, path, fields, sep='\t', header=False):
         """ init class operation """
         self.path = path
@@ -299,14 +336,18 @@ class Instructor:
                         instructors_summary_list.append(current_line[i])
                         i = i + 1
 
-                    instructors_summary_dict[instructors_summary_list[0]] = {"name": instructors_summary_list[1], "department": instructors_summary_list[2], "container": defaultdict(int)}
+                    instructors_summary_dict[instructors_summary_list[0]] = {"name": instructors_summary_list[1],
+                                                                             "department": instructors_summary_list[2],
+                                                                             "container": defaultdict(int)}
 
                     line = fp.readline().strip('\r\n')
 
             self.instructors_summary = instructors_summary_dict
 
+
 class Student:
     """ Class to instantiate the Students Summary """
+
     def __init__(self, path, fields, sep=';', header=True):
         """ init class operation """
         self.path = path
@@ -354,6 +395,7 @@ class Student:
 
             self.students_summary = students_summary_dict
 
+
 def main():
     try:
         dir_path = os.getcwd()
@@ -375,5 +417,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     app.run(debug=True)
