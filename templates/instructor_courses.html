@@ -10,13 +10,13 @@
     <th>Department</th>
     <th>Courses</th>
     <th>Students</th>
-    {% for i in instructors %}
+    {% for i in students %}
         <tr>
-            <td>{{ i.Instructor_CWID }}</td>
-            <td>{{ i.Name }}</td>
-            <td>{{ i.Dept }}</td>
-            <td>{{ i.Course }}</td>
-            <td>{{ i.Students }}</td>
+            <td>{{ i.cwid }}</td>
+            <td>{{ i.name }}</td>
+            <td>{{ i.dept }}</td>
+            <td>{{ i.courses }}</td>
+            <td>{{ i.students }}</td>
         </tr>
     {% endfor %}
 </table>

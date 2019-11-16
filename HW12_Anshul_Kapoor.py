@@ -32,7 +32,7 @@ def instructor_courses():
                     order by Instructor_CWID    """
         data1 = [{'cwid': cwid, 'name': name, 'dept': dept, 'courses': courses, 'students': students}
                  for cwid, name, dept, courses, students in db.execute(query)]
-        print(data1)
+        # print(data1)
         db.close()
 
         return render_template(
@@ -57,7 +57,7 @@ def students_courses():
                     group by s.CWID, s.Name, s.Major    """
         data = [{'cwid': cwid, 'name': name, 'major': major, 'complete': complete}
                 for cwid, name, major, complete in db.execute(query)]
-        print(data)
+        # print(data)
         db.close()
 
         return render_template(
